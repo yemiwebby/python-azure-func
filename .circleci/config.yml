@@ -18,25 +18,20 @@ jobs:
           command: python test_function_app.py
 
   deploy:
-    # Use the Node orb's executor with Node 16 or 18
     executor: node/default
     steps:
       - checkout
-      # 1) Install the Azure CLI via the orb
       - azure-cli/install
-      # 2) Login to Azure with service principal
       - azure-cli/login-with-service-principal:
           azure-sp: AZURE_CLIENT_ID
           azure-sp-password: AZURE_CLIENT_SECRET
           azure-sp-tenant: AZURE_TENANT_ID
-      # 3) Install Azure Functions Core Tools via NPM (now Node 16+ is guaranteed)
       - run:
           name: Install Azure Functions Tools
           command: npm install -g azure-functions-core-tools@4 --unsafe-perm
-      # 4) Publish with the `func` CLI
       - run:
           name: Publish to Azure Function App
-          command: func azure functionapp publish myPythonFunctionApp --python
+          command: func azure functionapp publish circleciPythonFunctionApp --python
 
 workflows:
   version: 2
