@@ -29,6 +29,12 @@ jobs:
           azure-sp-password: AZURE_CLIENT_SECRET
           azure-sp-tenant: AZURE_TENANT_ID
       - run:
+          name: Install Azure Functions Core Tools
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y nodejs npm
+            sudo npm install -g azure-functions-core-tools@4 --unsafe-perm
+      - run:
           name: Publish to Azure
           command: func azure functionapp publish myPythonFunctionApp --python
 
