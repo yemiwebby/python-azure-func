@@ -1,0 +1,42 @@
+version: 2.1
+
+orbs:
+  azure-cli: circleci/azure-cli@2.3.0
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            pip install -r requirements.txt
+      - run:
+          name: Run Tests with unittest
+          command: |
+            python test_function_app.py
+
+  deploy:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - azure-cli/install
+      - azure-cli/login-with-service-principal:
+          azure-sp: AZURE_CLIENT_ID
+          azure-sp-password: AZURE_CLIENT_SECRET
+          azure-sp-tenant: AZURE_TENANT_ID
+      - run:
+          name: Publish to Azure
+          command: func azure functionapp publish myPythonFunctionApp --python
+
+workflows:
+  version: 2
+  test-and-deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
